@@ -95,8 +95,9 @@ const BookSearch = () => {
   };
 
   const handleBookClick = (book: Book) => {
-    const query = `${book.title} ${book.author} book`;
-    window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+    // Search on Google Books which has "Get this book in print" and preview options
+    const query = `${book.title} ${book.author}`;
+    window.open(`https://www.google.com/search?tbm=bks&q=${encodeURIComponent(query)}`, "_blank");
   };
 
   return (
