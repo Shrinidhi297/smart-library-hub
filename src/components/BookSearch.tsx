@@ -94,6 +94,11 @@ const BookSearch = () => {
     }
   };
 
+  const handleBookClick = (book: Book) => {
+    const query = `${book.title} ${book.author} book`;
+    window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, "_blank");
+  };
+
   return (
     <section className="section-padding bg-background">
       <div className="section-container max-w-6xl mx-auto">
@@ -223,7 +228,8 @@ const BookSearch = () => {
                 {searchResults.map((book) => (
                   <div
                     key={book.id}
-                    className="bg-white rounded-xl p-6 text-foreground flex flex-col sm:flex-row gap-4 items-start sm:items-center card-hover shadow-sm border"
+                    onClick={() => handleBookClick(book)}
+                    className="cursor-pointer bg-white rounded-xl p-6 text-foreground flex flex-col sm:flex-row gap-4 items-start sm:items-center card-hover shadow-sm border hover:shadow-md transition-all"
                   >
                     <div className="w-16 h-20 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
                       <BookOpen className="h-8 w-8 text-primary" />
@@ -246,7 +252,10 @@ const BookSearch = () => {
                         variant="ghost"
                         size="icon"
                         className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
-                        onClick={() => handleDeleteBook(book.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteBook(book.id);
+                        }}
                       >
                         <Trash2 className="h-5 w-5" />
                       </Button>
@@ -278,7 +287,8 @@ const BookSearch = () => {
               {books.map((book) => (
                 <div
                   key={book.id}
-                  className="bg-white rounded-xl p-6 text-foreground flex flex-col sm:flex-row gap-4 items-start sm:items-center card-hover shadow-sm border"
+                  onClick={() => handleBookClick(book)}
+                  className="cursor-pointer bg-white rounded-xl p-6 text-foreground flex flex-col sm:flex-row gap-4 items-start sm:items-center card-hover shadow-sm border hover:shadow-md transition-all"
                 >
                   <div className="w-16 h-20 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
                     <BookOpen className="h-8 w-8 text-primary" />
@@ -301,7 +311,10 @@ const BookSearch = () => {
                       variant="ghost"
                       size="icon"
                       className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
-                      onClick={() => handleDeleteBook(book.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteBook(book.id);
+                      }}
                     >
                       <Trash2 className="h-5 w-5" />
                     </Button>
