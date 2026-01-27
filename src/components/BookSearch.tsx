@@ -95,35 +95,39 @@ const BookSearch = () => {
   };
 
   return (
-    <section className="section-padding bg-background">
+    <section className="section-padding bg-gradient-to-b from-background via-background to-muted/30">
       <div className="section-container max-w-6xl mx-auto">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12">
-          <span className="text-secondary font-semibold text-sm uppercase tracking-wider">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-semibold uppercase tracking-wider mb-6">
+            <span className="w-2 h-2 bg-secondary rounded-full" />
             {isAdmin ? "Admin Dashboard" : "User Dashboard"}
           </span>
-          <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold mt-3 mb-6 text-foreground">
-            {isAdmin ? "Manage Library Collection" : "Browse Library"}
+          <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mt-3 mb-6 text-foreground leading-tight">
+            {isAdmin ? "Manage Library " : "Browse Library "}
+            <span className="gradient-text">Collection</span>
           </h2>
-          <p className="text-muted-foreground text-lg leading-relaxed">
+          <p className="text-muted-foreground text-lg md:text-xl leading-relaxed">
             {isAdmin
-              ? "Add new books to the library database."
-              : "Search through our collection of books."}
+              ? "Add new books to the library database and manage your collection."
+              : "Search through our extensive collection of books."}
           </p>
         </div>
 
         {/* Add Book Form - ONLY FOR ADMIN */}
         {isAdmin && (
-          <div className="max-w-2xl mx-auto mb-12">
-            <div className="bg-card border shadow-sm rounded-xl p-6 mb-8">
-              <h3 className="font-serif text-xl font-semibold mb-4 flex items-center gap-2">
-                <Plus className="h-5 w-5" />
+          <div className="max-w-2xl mx-auto mb-16">
+            <div className="bg-card/80 backdrop-blur-sm border border-border/50 shadow-xl rounded-3xl p-8 card-hover">
+              <h3 className="font-serif text-2xl font-semibold mb-6 flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-secondary to-secondary/80 rounded-xl flex items-center justify-center">
+                  <Plus className="h-5 w-5 text-secondary-foreground" />
+                </div>
                 Add New Book
               </h3>
-              <form onSubmit={handleAddBook} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <Label htmlFor="title" className="text-foreground mb-2 block">
+              <form onSubmit={handleAddBook} className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                  <div className="space-y-2">
+                    <Label htmlFor="title" className="text-foreground font-medium">
                       Title
                     </Label>
                     <Input
@@ -132,11 +136,11 @@ const BookSearch = () => {
                       value={newBook.title}
                       onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
                       placeholder="Enter book title"
-                      className="bg-background text-foreground"
+                      className="bg-background/50 text-foreground border-border/50 rounded-xl h-12 focus:ring-2 focus:ring-secondary/30 transition-all"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="author" className="text-foreground mb-2 block">
+                  <div className="space-y-2">
+                    <Label htmlFor="author" className="text-foreground font-medium">
                       Author
                     </Label>
                     <Input
@@ -145,11 +149,11 @@ const BookSearch = () => {
                       value={newBook.author}
                       onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
                       placeholder="Enter author name"
-                      className="bg-background text-foreground"
+                      className="bg-background/50 text-foreground border-border/50 rounded-xl h-12 focus:ring-2 focus:ring-secondary/30 transition-all"
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="year" className="text-foreground mb-2 block">
+                  <div className="space-y-2">
+                    <Label htmlFor="year" className="text-foreground font-medium">
                       Year
                     </Label>
                     <Input
@@ -158,15 +162,15 @@ const BookSearch = () => {
                       value={newBook.year}
                       onChange={(e) => setNewBook({ ...newBook, year: e.target.value })}
                       placeholder="Enter year"
-                      className="bg-background text-foreground"
+                      className="bg-background/50 text-foreground border-border/50 rounded-xl h-12 focus:ring-2 focus:ring-secondary/30 transition-all"
                     />
                   </div>
                 </div>
                 <Button
                   type="submit"
-                  className="bg-secondary text-secondary-foreground hover:bg-secondary/90 w-full md:w-auto px-8"
+                  className="bg-gradient-to-r from-secondary to-secondary/90 text-secondary-foreground hover:shadow-lg w-full md:w-auto px-10 py-6 rounded-xl font-semibold transition-all duration-300"
                 >
-                  <Plus className="h-4 w-4 mr-2" />
+                  <Plus className="h-5 w-5 mr-2" />
                   Add Book
                 </Button>
               </form>
@@ -175,22 +179,23 @@ const BookSearch = () => {
         )}
 
         {/* Search Box */}
-        <div className="max-w-2xl mx-auto mb-12">
+        <div className="max-w-3xl mx-auto mb-16">
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+            <div className="relative flex-1 group">
+              <div className="absolute inset-0 bg-gradient-to-r from-secondary/20 to-primary/20 rounded-2xl blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-300" />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
               <Input
                 type="text"
                 placeholder="Search by title or author..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-                className="pl-12 pr-10 py-6 text-lg bg-background text-foreground border rounded-xl shadow-sm"
+                className="relative pl-14 pr-12 py-7 text-lg bg-card/80 backdrop-blur-sm text-foreground border-border/50 rounded-2xl shadow-lg focus:shadow-xl transition-all duration-300 focus:ring-2 focus:ring-secondary/30"
               />
               {searchQuery && (
                 <button
                   onClick={clearSearch}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors z-10"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -199,7 +204,7 @@ const BookSearch = () => {
             <Button
               onClick={handleSearch}
               size="lg"
-              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6 text-lg font-semibold rounded-xl"
+              className="bg-gradient-to-r from-secondary to-secondary/90 text-secondary-foreground hover:shadow-xl px-10 py-7 text-lg font-semibold rounded-2xl transition-all duration-300 glow-effect"
             >
               <Search className="h-5 w-5 mr-2" />
               Search
@@ -210,8 +215,11 @@ const BookSearch = () => {
         {/* Search Results */}
         {hasSearched && (
           <div className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-serif text-xl font-semibold">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="font-serif text-2xl font-semibold flex items-center gap-3">
+                <div className="w-8 h-8 bg-secondary/20 rounded-lg flex items-center justify-center">
+                  <BookOpen className="h-4 w-4 text-secondary" />
+                </div>
                 {searchResults.length > 0
                   ? `Found ${searchResults.length} result${searchResults.length !== 1 ? "s" : ""}`
                   : "No results found"}
@@ -219,25 +227,26 @@ const BookSearch = () => {
             </div>
 
             {searchResults.length > 0 ? (
-              <div className="grid gap-4">
-                {searchResults.map((book) => (
+              <div className="grid gap-5">
+                {searchResults.map((book, index) => (
                   <div
                     key={book.id}
-                    className="bg-white rounded-xl p-6 text-foreground flex flex-col sm:flex-row gap-4 items-start sm:items-center card-hover shadow-sm border"
+                    className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 text-foreground flex flex-col sm:flex-row gap-5 items-start sm:items-center card-hover shadow-lg border border-border/50 animate-fade-in"
+                    style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <div className="w-16 h-20 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-16 h-20 bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/20 rounded-xl flex items-center justify-center flex-shrink-0 shadow-inner">
                       <BookOpen className="h-8 w-8 text-primary" />
                     </div>
                     <div className="flex-1">
-                      <h4 className="font-serif text-lg font-bold text-foreground mb-1">
+                      <h4 className="font-serif text-xl font-bold text-foreground mb-1">
                         {book.title}
                       </h4>
-                      <p className="text-muted-foreground text-sm mb-2">
+                      <p className="text-muted-foreground mb-3">
                         by {book.author}
                       </p>
                       <div className="flex flex-wrap gap-2">
-                        <span className="px-2 py-1 bg-muted rounded text-xs text-muted-foreground">
-                          Year: {book.year}
+                        <span className="px-3 py-1.5 bg-muted/50 rounded-lg text-xs font-medium text-muted-foreground">
+                          📅 Year: {book.year}
                         </span>
                       </div>
                     </div>
@@ -245,7 +254,7 @@ const BookSearch = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                        className="text-destructive hover:text-destructive/90 hover:bg-destructive/10 rounded-xl"
                         onClick={() => handleDeleteBook(book.id)}
                       >
                         <Trash2 className="h-5 w-5" />
@@ -255,12 +264,14 @@ const BookSearch = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 bg-muted/30 rounded-xl border border-dashed">
-                <BookOpen className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-                <p className="text-muted-foreground text-lg">
+              <div className="text-center py-16 bg-card/50 backdrop-blur-sm rounded-3xl border border-dashed border-border/50">
+                <div className="w-20 h-20 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <BookOpen className="h-10 w-10 text-muted-foreground/40" />
+                </div>
+                <p className="text-muted-foreground text-xl font-medium">
                   No books found matching "{searchQuery}"
                 </p>
-                <p className="text-muted-foreground/60 text-sm mt-2">
+                <p className="text-muted-foreground/60 text-sm mt-3">
                   Try searching with different keywords
                 </p>
               </div>
@@ -271,28 +282,32 @@ const BookSearch = () => {
         {/* Show All Books */}
         {!hasSearched && books.length > 0 && (
           <div className="max-w-4xl mx-auto">
-            <h3 className="font-serif text-xl font-semibold mb-6">
+            <h3 className="font-serif text-2xl font-semibold mb-8 flex items-center gap-3">
+              <div className="w-8 h-8 bg-secondary/20 rounded-lg flex items-center justify-center">
+                <BookOpen className="h-4 w-4 text-secondary" />
+              </div>
               All Books ({books.length})
             </h3>
-            <div className="grid gap-4">
-              {books.map((book) => (
+            <div className="grid gap-5">
+              {books.map((book, index) => (
                 <div
                   key={book.id}
-                  className="bg-white rounded-xl p-6 text-foreground flex flex-col sm:flex-row gap-4 items-start sm:items-center card-hover shadow-sm border"
+                  className="bg-card/80 backdrop-blur-sm rounded-2xl p-6 text-foreground flex flex-col sm:flex-row gap-5 items-start sm:items-center card-hover shadow-lg border border-border/50 animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="w-16 h-20 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <div className="w-16 h-20 bg-gradient-to-br from-primary/20 via-primary/10 to-secondary/20 rounded-xl flex items-center justify-center flex-shrink-0 shadow-inner">
                     <BookOpen className="h-8 w-8 text-primary" />
                   </div>
                   <div className="flex-1">
-                    <h4 className="font-serif text-lg font-bold text-foreground mb-1">
+                    <h4 className="font-serif text-xl font-bold text-foreground mb-1">
                       {book.title}
                     </h4>
-                    <p className="text-muted-foreground text-sm mb-2">
+                    <p className="text-muted-foreground mb-3">
                       by {book.author}
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      <span className="px-2 py-1 bg-muted rounded text-xs text-muted-foreground">
-                        Year: {book.year}
+                      <span className="px-3 py-1.5 bg-muted/50 rounded-lg text-xs font-medium text-muted-foreground">
+                        📅 Year: {book.year}
                       </span>
                     </div>
                   </div>
@@ -300,7 +315,7 @@ const BookSearch = () => {
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                      className="text-destructive hover:text-destructive/90 hover:bg-destructive/10 rounded-xl"
                       onClick={() => handleDeleteBook(book.id)}
                     >
                       <Trash2 className="h-5 w-5" />
@@ -314,13 +329,15 @@ const BookSearch = () => {
 
         {/* Empty State */}
         {!hasSearched && books.length === 0 && (
-          <div className="max-w-4xl mx-auto text-center py-12 bg-muted/30 rounded-xl border border-dashed">
-            <BookOpen className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="text-muted-foreground text-lg">
+          <div className="max-w-4xl mx-auto text-center py-20 bg-card/50 backdrop-blur-sm rounded-3xl border border-dashed border-border/50">
+            <div className="w-24 h-24 bg-muted/50 rounded-full flex items-center justify-center mx-auto mb-8">
+              <BookOpen className="h-12 w-12 text-muted-foreground/40" />
+            </div>
+            <p className="text-muted-foreground text-2xl font-medium font-serif">
               No books in your library yet
             </p>
             {isAdmin && (
-              <p className="text-muted-foreground/60 text-sm mt-2">
+              <p className="text-muted-foreground/60 mt-4">
                 Add your first book using the form above
               </p>
             )}
