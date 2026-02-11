@@ -1,5 +1,5 @@
 import React from "react";
-import { CreditCard, History, Clock, AlertCircle, Search, ShieldCheck, BookOpen, ExternalLink } from "lucide-react";
+import { CreditCard, History, Clock, AlertCircle, Search, ShieldCheck, BookOpen, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
@@ -13,14 +13,17 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-
-interface Reservation {
-    id: number;
-    bookTitle: string;
-    reservedDate: string;
-    dueDate: string;
-    status: 'active' | 'overdue' | 'returned';
-}
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface UserDashboardProps {
     onNavigateToSearch: () => void;
@@ -77,7 +80,42 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
         }
     });
 
-    const fines = 0.00; // In a real app, you'd fetch this from a profiles table
+    // Delete Reservation Mutation
+    const deleteReservationMutation = useMutation({
+        mutationFn: async ({ reservationId, bookId, availableCopies }: { reservationId: string, bookId: string, availableCopies: number }) => {
+            if (!user) throw new Error("Authentication required");
+
+            // 1. Delete the reservation
+            const { error: deleteError } = await supabase
+                .from('reservations')
+                .delete()
+                .eq('id', reservationId);
+
+            if (deleteError) throw deleteError;
+
+            // 2. Increment available copies back
+            const { error: updateError } = await supabase
+                .from('books')
+                .update({ available_copies: availableCopies + 1 })
+                .eq('id', bookId);
+
+            if (updateError) throw updateError;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['user-reservations'] });
+            queryClient.invalidateQueries({ queryKey: ['books'] });
+            toast.success("Reservation Cancelled", {
+                description: "The book has been returned to the archive."
+            });
+        },
+        onError: (error: any) => {
+            toast.error("Cancellation Failed", {
+                description: error.message || "Unable to cancel reservation."
+            });
+        }
+    });
+
+    const fines = 0.00;
 
     if (!user) return null;
 
@@ -161,7 +199,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
                             <div className="space-y-6 relative z-10">
                                 {[
                                     { label: 'E-Books', val: '10k+', icon: BookOpen },
-                                    { label: 'Reservations', val: '5/5', icon: History },
+                                    { label: 'Reservations', val: `${reservations.length}/5`, icon: History },
                                     { label: 'Status', val: 'Active', icon: ShieldCheck }
                                 ].map((item, idx) => (
                                     <div
@@ -206,8 +244,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
                             {reservations.map((res: any) => (
                                 <div key={res.id} className="card-3d p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 group">
                                     <div className="flex items-center gap-8">
-                                        <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 ${res.status === 'overdue' ? 'bg-red-50 text-red-500 shadow-lg shadow-red-200/50' : 'bg-primary/5 text-primary shadow-lg shadow-primary/20'
-                                            }`}>
+                                        <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 ${res.status === 'overdue' ? 'bg-red-50 text-red-500 shadow-lg shadow-red-200/50' : 'bg-primary/5 text-primary shadow-lg shadow-primary/20'}`}>
                                             {res.status === 'overdue' ? <AlertCircle className="h-8 w-8" /> : <History className="h-8 w-8" />}
                                         </div>
                                         <div>
@@ -223,66 +260,100 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
                                         </div>
                                     </div>
 
-                                    <Dialog>
-                                        <DialogTrigger asChild>
-                                            <Button
-                                                variant="outline"
-                                                className="h-14 px-8 rounded-2xl border-slate-200 font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-50 hover:border-primary/50 transition-all"
-                                            >
-                                                Detail View
-                                            </Button>
-                                        </DialogTrigger>
-                                        <DialogContent className="sm:max-w-md rounded-[2.5rem] border-none shadow-3xl">
-                                            <DialogHeader>
-                                                <DialogTitle className="text-3xl font-black tracking-tighter text-slate-900">{res.books?.title}</DialogTitle>
-                                                <DialogDescription className="font-bold text-slate-400 uppercase tracking-widest text-xs">
-                                                    Archival metadata & tracking
-                                                </DialogDescription>
-                                            </DialogHeader>
-                                            <div className="py-10 space-y-6">
-                                                <div className="grid grid-cols-2 gap-4">
-                                                    <div className="p-6 bg-slate-50 rounded-3xl">
-                                                        <span className="text-[10px] font-black text-slate-400 block mb-2 uppercase">Reserved</span>
-                                                        <span className="font-black text-slate-900">{new Date(res.reserved_date).toLocaleDateString()}</span>
-                                                    </div>
-                                                    <div className="p-6 bg-slate-50 rounded-3xl">
-                                                        <span className="text-[10px] font-black text-slate-400 block mb-2 uppercase">Maturity</span>
-                                                        <span className="font-black text-slate-900">{new Date(res.due_date).toLocaleDateString()}</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="flex gap-4">
+                                    <div className="flex gap-4">
+                                        <AlertDialog>
+                                            <AlertDialogTrigger asChild>
                                                 <Button
                                                     variant="outline"
-                                                    className="flex-1 h-16 rounded-[1.5rem] border-2 border-slate-200 hover:border-primary/50 font-black text-xs uppercase tracking-widest"
-                                                    onClick={() => {
-                                                        const query = `${res.books?.title} ${res.books?.author || ''}`;
-                                                        window.open(`https://www.google.com/search?tbm=bks&q=${encodeURIComponent(query)}`, '_blank');
-                                                    }}
+                                                    className="h-14 px-8 rounded-2xl border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 font-black text-xs uppercase tracking-[0.2em] transition-all"
                                                 >
-                                                    <Search className="mr-2 h-5 w-5" />
-                                                    Browse Archive
+                                                    <Trash2 className="mr-2 h-4 w-4" />
+                                                    Cancel
                                                 </Button>
+                                            </AlertDialogTrigger>
+                                            <AlertDialogContent className="rounded-[2.5rem] border-none shadow-3xl">
+                                                <AlertDialogHeader>
+                                                    <AlertDialogTitle className="text-2xl font-black text-slate-900">Cancel Reservation?</AlertDialogTitle>
+                                                    <AlertDialogDescription className="text-slate-500 font-bold">
+                                                        Are you sure you want to cancel your reservation for <span className="text-slate-900 font-black">{res.books?.title}</span>? This action cannot be undone.
+                                                    </AlertDialogDescription>
+                                                </AlertDialogHeader>
+                                                <AlertDialogFooter>
+                                                    <AlertDialogCancel className="rounded-2xl h-12 px-6 font-black text-xs uppercase tracking-widest">Keep It</AlertDialogCancel>
+                                                    <AlertDialogAction
+                                                        className="rounded-2xl h-12 px-6 bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-widest"
+                                                        onClick={() => deleteReservationMutation.mutate({
+                                                            reservationId: res.id,
+                                                            bookId: res.book_id,
+                                                            availableCopies: res.books?.available_copies || 0
+                                                        })}
+                                                    >
+                                                        Yes, Cancel
+                                                    </AlertDialogAction>
+                                                </AlertDialogFooter>
+                                            </AlertDialogContent>
+                                        </AlertDialog>
+
+                                        <Dialog>
+                                            <DialogTrigger asChild>
                                                 <Button
-                                                    className="flex-1 btn-nova h-16 rounded-[1.5rem]"
-                                                    onClick={() => renewalMutation.mutate({
-                                                        reservationId: res.id,
-                                                        bookTitle: res.books?.title || 'Unknown Book'
-                                                    })}
-                                                    disabled={renewalMutation.isPending}
+                                                    variant="outline"
+                                                    className="h-14 px-8 rounded-2xl border-slate-200 font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-50 hover:border-primary/50 transition-all"
                                                 >
-                                                    {renewalMutation.isPending ? 'Submitting...' : 'Extend Access'}
+                                                    Detail View
                                                 </Button>
-                                            </div>
-                                        </DialogContent>
-                                    </Dialog>
+                                            </DialogTrigger>
+                                            <DialogContent className="sm:max-w-md rounded-[2.5rem] border-none shadow-3xl">
+                                                <DialogHeader>
+                                                    <DialogTitle className="text-3xl font-black tracking-tighter text-slate-900">{res.books?.title}</DialogTitle>
+                                                    <DialogDescription className="font-bold text-slate-400 uppercase tracking-widest text-xs">
+                                                        Archival metadata & tracking
+                                                    </DialogDescription>
+                                                </DialogHeader>
+                                                <div className="py-10 space-y-6">
+                                                    <div className="grid grid-cols-2 gap-4">
+                                                        <div className="p-6 bg-slate-50 rounded-3xl">
+                                                            <span className="text-[10px] font-black text-slate-400 block mb-2 uppercase">Reserved</span>
+                                                            <span className="font-black text-slate-900">{new Date(res.reserved_date).toLocaleDateString()}</span>
+                                                        </div>
+                                                        <div className="p-6 bg-slate-50 rounded-3xl">
+                                                            <span className="text-[10px] font-black text-slate-400 block mb-2 uppercase">Maturity</span>
+                                                            <span className="font-black text-slate-900">{new Date(res.due_date).toLocaleDateString()}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-4">
+                                                    <Button
+                                                        variant="outline"
+                                                        className="flex-1 h-16 rounded-[1.5rem] border-2 border-slate-200 hover:border-primary/50 font-black text-xs uppercase tracking-widest"
+                                                        onClick={() => {
+                                                            const query = `${res.books?.title} ${res.books?.author || ''}`;
+                                                            window.open(`https://www.google.com/search?tbm=bks&q=${encodeURIComponent(query)}`, '_blank');
+                                                        }}
+                                                    >
+                                                        <Search className="mr-2 h-5 w-5" />
+                                                        Browse Archive
+                                                    </Button>
+                                                    <Button
+                                                        className="flex-1 btn-nova h-16 rounded-[1.5rem]"
+                                                        onClick={() => renewalMutation.mutate({
+                                                            reservationId: res.id,
+                                                            bookTitle: res.books?.title || 'Unknown Book'
+                                                        })}
+                                                        disabled={renewalMutation.isPending}
+                                                    >
+                                                        {renewalMutation.isPending ? 'Submitting...' : 'Extend Access'}
+                                                    </Button>
+                                                </div>
+                                            </DialogContent>
+                                        </Dialog>
+                                    </div>
                                 </div>
                             ))}
                         </div>
 
                         {/* Expand Collection Action */}
-                        <div className="glass-panel p-12 text-center border-dashed group cursor-pointer hover:border-primary/30 transition-colors"
-                            onClick={onNavigateToSearch}>
+                        <div className="glass-panel p-12 text-center border-dashed group cursor-pointer hover:border-primary/30 transition-colors" onClick={onNavigateToSearch}>
                             <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/10 transition-colors">
                                 <Search className="h-6 w-6 text-slate-400 group-hover:text-primary" />
                             </div>
@@ -299,4 +370,3 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
 };
 
 export default UserDashboard;
-

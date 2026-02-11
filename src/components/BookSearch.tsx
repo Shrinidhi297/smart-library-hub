@@ -14,6 +14,17 @@ import { useSoundEffects } from "@/hooks/use-sound-effects";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { AdminRenewalPanel } from "./AdminRenewalPanel";
 
 interface Book {
@@ -380,15 +391,35 @@ const BookSearch: React.FC<BookSearchProps> = ({ onNavigateToDashboard }) => {
                     </span>
                     <div className="flex gap-4">
                       {isAdmin && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-12 w-12 rounded-2xl hover:bg-red-50 text-slate-400 hover:text-red-500 transition-all border border-transparent hover:border-red-100"
-                          onClick={(e) => { e.stopPropagation(); deleteBookMutation.mutate(book.id); }}
-                          onMouseEnter={playHover}
-                        >
-                          <Trash2 className="h-5 w-5" />
-                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-12 w-12 rounded-2xl hover:bg-red-50 text-slate-400 hover:text-red-500 transition-all border border-transparent hover:border-red-100"
+                              onMouseEnter={playHover}
+                            >
+                              <Trash2 className="h-5 w-5" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent className="rounded-[2.5rem] border-none shadow-3xl">
+                            <AlertDialogHeader>
+                              <AlertDialogTitle className="text-2xl font-black text-slate-900">Remove Book?</AlertDialogTitle>
+                              <AlertDialogDescription className="text-slate-500 font-bold">
+                                Are you sure you want to remove <span className="text-slate-900 font-black">{book.title}</span> from the archives? This will also remove any active reservations for this book.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel className="rounded-2xl h-12 px-6 font-black text-xs uppercase tracking-widest">Keep It</AlertDialogCancel>
+                              <AlertDialogAction
+                                className="rounded-2xl h-12 px-6 bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-widest"
+                                onClick={() => deleteBookMutation.mutate(book.id)}
+                              >
+                                Yes, Remove
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       )}
                       <Button
                         variant="outline"
