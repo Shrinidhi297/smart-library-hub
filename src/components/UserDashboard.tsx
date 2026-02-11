@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { CreditCard, History, Clock, AlertCircle, Search, ShieldCheck, BookOpen, ExternalLink, Info } from "lucide-react";
+import React from "react";
+import { CreditCard, History, Clock, AlertCircle, Search, ShieldCheck, BookOpen, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@clerk/clerk-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
     Dialog,
     DialogContent,
@@ -26,23 +28,56 @@ interface UserDashboardProps {
 
 const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => {
     const { user } = useUser();
-    const [fines, setFines] = useState(15.50);
+    const queryClient = useQueryClient();
 
-    const [reservations] = useState<Reservation[]>([
-        { id: 1, bookTitle: "Atomic Habits", reservedDate: "2024-02-01", dueDate: "2024-02-15", status: 'active' },
-        { id: 2, bookTitle: "Deep Work", reservedDate: "2024-01-10", dueDate: "2024-01-24", status: 'overdue' },
-    ]);
+    const { data: reservations = [], isLoading } = useQuery({
+        queryKey: ['user-reservations', user?.id],
+        queryFn: async () => {
+            if (!user) return [];
+            const { data, error } = await supabase
+                .from('reservations')
+                .select(`
+                    *,
+                    books (*)
+                `)
+                .eq('user_id', user.id);
+            if (error) throw error;
+            return data;
+        },
+        enabled: !!user,
+    });
 
-    const calculateFine = (dueDate: string) => {
-        const due = new Date(dueDate);
-        const today = new Date();
-        if (today > due) {
-            const diffTime = Math.abs(today.getTime() - due.getTime());
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            return diffDays * 0.50; // $0.50 per day
+    // Renewal Request Mutation
+    const renewalMutation = useMutation({
+        mutationFn: async ({ reservationId, bookTitle }: { reservationId: string, bookTitle: string }) => {
+            if (!user) throw new Error("Authentication required");
+
+            const { error } = await supabase
+                .from('renewal_requests')
+                .insert({
+                    reservation_id: reservationId,
+                    user_id: user.id,
+                    user_name: user.fullName || user.firstName || 'Unknown User',
+                    book_title: bookTitle,
+                    status: 'pending'
+                });
+
+            if (error) throw error;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['renewal-requests'] });
+            toast.success("Renewal Request Submitted", {
+                description: "Admin will review your request shortly."
+            });
+        },
+        onError: (error: any) => {
+            toast.error("Request Failed", {
+                description: error.message || "Unable to submit renewal request."
+            });
         }
-        return 0;
-    };
+    });
+
+    const fines = 0.00; // In a real app, you'd fetch this from a profiles table
 
     if (!user) return null;
 
@@ -70,8 +105,8 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
                             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                             USER_ID: {user.id.slice(-8).toUpperCase()}
                         </div>
-                        <h2 className="text-4xl md:text-7xl font-black tracking-tighter text-slate-900 leading-[0.9] mb-4">
-                            Member <span className="shimmer-text italic">Command</span>
+                        <h2 className="text-4xl md:text-7xl font-black tracking-tighter text-slate-900 leading-tight mb-4">
+                            Member <span className="shimmer-text italic pr-4">Command</span>
                         </h2>
                         <p className="text-slate-500 font-bold text-lg md:text-xl">
                             Welcome back, {user.firstName}. Monitor your archive activity and assets.
@@ -155,7 +190,20 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
                         </div>
 
                         <div className="grid gap-6">
-                            {reservations.map((res) => (
+                            {isLoading && (
+                                <div className="p-20 text-center">
+                                    <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto" />
+                                    <p className="mt-4 text-slate-400 font-bold uppercase tracking-widest text-xs">Syncing Shelves...</p>
+                                </div>
+                            )}
+
+                            {!isLoading && reservations.length === 0 && (
+                                <div className="glass-panel p-20 text-center">
+                                    <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No active reservations found.</p>
+                                </div>
+                            )}
+
+                            {reservations.map((res: any) => (
                                 <div key={res.id} className="card-3d p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 group">
                                     <div className="flex items-center gap-8">
                                         <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 ${res.status === 'overdue' ? 'bg-red-50 text-red-500 shadow-lg shadow-red-200/50' : 'bg-primary/5 text-primary shadow-lg shadow-primary/20'
@@ -163,16 +211,14 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
                                             {res.status === 'overdue' ? <AlertCircle className="h-8 w-8" /> : <History className="h-8 w-8" />}
                                         </div>
                                         <div>
-                                            <h4 className="text-2xl font-black text-slate-900 group-hover:text-primary transition-colors leading-tight mb-2">{res.bookTitle}</h4>
+                                            <h4 className="text-2xl font-black text-slate-900 group-hover:text-primary transition-colors leading-tight mb-2">{res.books?.title}</h4>
                                             <div className="flex flex-wrap gap-4">
                                                 <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                                    <Clock className="h-3.5 w-3.5" /> Due: {res.dueDate}
+                                                    <Clock className="h-3.5 w-3.5" /> Due: {new Date(res.due_date).toLocaleDateString()}
                                                 </div>
-                                                {res.status === 'overdue' && (
-                                                    <div className="px-3 py-1 bg-red-100 text-red-600 rounded-lg text-[9px] font-black uppercase tracking-widest">
-                                                        Late: ${calculateFine(res.dueDate).toFixed(2)}
-                                                    </div>
-                                                )}
+                                                <div className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${res.status === 'overdue' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+                                                    {res.status}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -188,7 +234,7 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
                                         </DialogTrigger>
                                         <DialogContent className="sm:max-w-md rounded-[2.5rem] border-none shadow-3xl">
                                             <DialogHeader>
-                                                <DialogTitle className="text-3xl font-black tracking-tighter text-slate-900">{res.bookTitle}</DialogTitle>
+                                                <DialogTitle className="text-3xl font-black tracking-tighter text-slate-900">{res.books?.title}</DialogTitle>
                                                 <DialogDescription className="font-bold text-slate-400 uppercase tracking-widest text-xs">
                                                     Archival metadata & tracking
                                                 </DialogDescription>
@@ -197,30 +243,36 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
                                                 <div className="grid grid-cols-2 gap-4">
                                                     <div className="p-6 bg-slate-50 rounded-3xl">
                                                         <span className="text-[10px] font-black text-slate-400 block mb-2 uppercase">Reserved</span>
-                                                        <span className="font-black text-slate-900">{res.reservedDate}</span>
+                                                        <span className="font-black text-slate-900">{new Date(res.reserved_date).toLocaleDateString()}</span>
                                                     </div>
                                                     <div className="p-6 bg-slate-50 rounded-3xl">
                                                         <span className="text-[10px] font-black text-slate-400 block mb-2 uppercase">Maturity</span>
-                                                        <span className="font-black text-slate-900">{res.dueDate}</span>
+                                                        <span className="font-black text-slate-900">{new Date(res.due_date).toLocaleDateString()}</span>
                                                     </div>
-                                                </div>
-                                                <div className="p-8 bg-primary/5 rounded-[2rem] border border-primary/10 flex items-center justify-between">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-sm">
-                                                            <ShieldCheck className="h-6 w-6 text-primary" />
-                                                        </div>
-                                                        <div>
-                                                            <p className="text-sm font-black text-slate-900">Digital twin available</p>
-                                                            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Linked to vault</p>
-                                                        </div>
-                                                    </div>
-                                                    <Button variant="ghost" className="rounded-xl h-12 px-4 hover:bg-primary/10 text-primary">
-                                                        <ExternalLink className="h-5 w-5" />
-                                                    </Button>
                                                 </div>
                                             </div>
                                             <div className="flex gap-4">
-                                                <Button className="flex-1 btn-nova h-16 rounded-[1.5rem]" onClick={() => toast.success("Renewal sequence initiated")}>Extend Access</Button>
+                                                <Button
+                                                    variant="outline"
+                                                    className="flex-1 h-16 rounded-[1.5rem] border-2 border-slate-200 hover:border-primary/50 font-black text-xs uppercase tracking-widest"
+                                                    onClick={() => {
+                                                        const query = `${res.books?.title} ${res.books?.author || ''}`;
+                                                        window.open(`https://www.google.com/search?tbm=bks&q=${encodeURIComponent(query)}`, '_blank');
+                                                    }}
+                                                >
+                                                    <Search className="mr-2 h-5 w-5" />
+                                                    Browse Archive
+                                                </Button>
+                                                <Button
+                                                    className="flex-1 btn-nova h-16 rounded-[1.5rem]"
+                                                    onClick={() => renewalMutation.mutate({
+                                                        reservationId: res.id,
+                                                        bookTitle: res.books?.title || 'Unknown Book'
+                                                    })}
+                                                    disabled={renewalMutation.isPending}
+                                                >
+                                                    {renewalMutation.isPending ? 'Submitting...' : 'Extend Access'}
+                                                </Button>
                                             </div>
                                         </DialogContent>
                                     </Dialog>

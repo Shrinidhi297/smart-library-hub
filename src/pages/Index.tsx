@@ -225,9 +225,9 @@ const Index = () => {
                 <span className="text-xs font-black uppercase tracking-[0.2em] text-primary">Intelligence-Driven Archive</span>
               </div>
 
-              <h2 className="text-5xl sm:text-7xl md:text-[9rem] font-black mb-12 leading-[0.85] tracking-tighter text-slate-900 animate-nova-in" style={{ animationDelay: '0.1s' }}>
+              <h2 className="text-5xl sm:text-7xl md:text-[9rem] font-black mb-12 leading-tight tracking-tighter text-slate-900 animate-nova-in" style={{ animationDelay: '0.1s' }}>
                 Master Your <br className="hidden sm:block" />
-                <span className="shimmer-text italic">Digital Legacy</span>
+                <span className="shimmer-text italic pr-8">Digital Legacy</span>
               </h2>
 
               <p className="text-xl md:text-3xl text-slate-500 mb-16 md:mb-24 max-w-4xl mx-auto leading-tight animate-nova-in font-bold tracking-tight" style={{ animationDelay: '0.2s' }}>
