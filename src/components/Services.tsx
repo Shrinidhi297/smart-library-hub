@@ -1,42 +1,66 @@
-import { 
-  BookOpen, 
-  Search, 
-  CreditCard, 
-  UserCircle, 
-  Lightbulb,
-  Download
+import {
+  BookOpen,
+  Search,
+  CreditCard,
+  UserCircle,
+  Download,
+  Scan,
+  Database,
+  ShieldCheck,
+  SlidersHorizontal,
+  Smartphone
 } from "lucide-react";
 
 const services = [
   {
-    icon: BookOpen,
-    title: "Digital Book Access",
-    description: "Access thousands of e-books, journals, and research papers from anywhere, anytime through our comprehensive digital library.",
-  },
-  {
     icon: Search,
-    title: "Smart Book Search",
-    description: "Find exactly what you need with our intelligent search system that understands context and provides accurate results instantly.",
+    title: "Online Book Search",
+    description: "Instantly find any book in our massive digital repository using our high-speed indexing engine.",
   },
   {
-    icon: CreditCard,
-    title: "RFID-Based Issue & Return",
-    description: "Experience hassle-free book borrowing and returns with our automated RFID system - no queues, no paperwork.",
+    icon: Scan,
+    title: "Availability Status",
+    description: "Real-time tracking of book availability. Know exactly which books are on shelves or when they'll return.",
+  },
+  {
+    icon: Database,
+    title: "Digital Library System",
+    description: "A comprehensive ecosystem managing physical and digital assets with seamless synchronization.",
   },
   {
     icon: UserCircle,
-    title: "Online Student Portal",
-    description: "Manage your library account, track borrowed books, view due dates, and access your reading history all in one place.",
+    title: "User Login System",
+    description: "Secure Clerk-powered authentication providing a personalized dashboard for every member.",
   },
   {
-    icon: Lightbulb,
-    title: "AI Book Recommendations",
-    description: "Get personalized book suggestions based on your reading patterns, interests, and academic requirements.",
+    icon: BookOpen,
+    title: "Book Reservation",
+    description: "Reserve your favorite titles ahead of time. Our system holds your selection for quick pickup.",
   },
   {
     icon: Download,
-    title: "Offline Downloads",
-    description: "Download books for offline reading and access your materials even without an internet connection.",
+    title: "E-Books Access",
+    description: "Direct access to thousands of digital publications, journals, and interactive research materials.",
+  },
+  {
+    icon: CreditCard,
+    title: "Fine Calculation",
+    description: "Automated transparent fine management. Track overdue books and pay dues online instantly.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Admin Dashboard",
+    description: "Powerful management tools for librarians to curate content, track inventory, and manage users.",
+  },
+  {
+    icon: SlidersHorizontal,
+    title: "Search Filters",
+    description: "Drill down into our collection with granular filters including genre, year, status, and author.",
+  },
+  {
+    icon: Smartphone,
+    title: "Mobile Friendly",
+    description: "Access the entire library hub from any device. Our responsive design ensures a premium experience everywhere.",
   },
 ];
 
@@ -53,7 +77,7 @@ const Services = () => {
             Comprehensive Library Services
           </h2>
           <p className="text-muted-foreground text-lg leading-relaxed">
-            Discover our wide range of services designed to enhance your learning experience 
+            Discover our wide range of services designed to enhance your learning experience
             and make accessing knowledge easier than ever before.
           </p>
         </div>
