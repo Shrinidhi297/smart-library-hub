@@ -81,11 +81,11 @@ export const AdminRenewalPanel: React.FC = () => {
                 <div className="absolute top-0 left-0 w-96 h-96 bg-emerald-50 rounded-full blur-[100px] -ml-48 -mt-48 opacity-50 group-hover:opacity-100 transition-opacity" />
 
                 <div className="relative z-10">
-                    <h3 className="text-3xl font-black text-slate-900 mb-10 flex items-center gap-4">
-                        <div className="w-3 h-10 bg-emerald-500 rounded-full" />
+                    <h3 className="text-2xl md:text-3xl font-black text-slate-900 mb-8 md:mb-10 flex flex-wrap items-center gap-4">
+                        <div className="w-2 md:w-3 h-8 md:h-10 bg-emerald-500 rounded-full shrink-0" />
                         Renewal <span className="text-emerald-600 italic">Requests</span>
                         {pendingRequests.length > 0 && (
-                            <span className="px-4 py-1 bg-amber-100 text-amber-600 rounded-full text-sm font-black">
+                            <span className="px-3 md:py-1 bg-amber-100 text-amber-600 rounded-full text-[10px] md:text-sm font-black">
                                 {pendingRequests.length} Pending
                             </span>
                         )}
@@ -106,23 +106,23 @@ export const AdminRenewalPanel: React.FC = () => {
 
                     <div className="grid gap-6">
                         {renewalRequests.map((request) => (
-                            <div key={request.id} className="bg-white p-8 rounded-3xl border-2 border-slate-100 hover:border-emerald-200 transition-all group">
-                                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                                    <div className="flex items-center gap-6">
-                                        <div className={`w-16 h-16 rounded-2xl flex items-center justify-center ${request.status === 'pending' ? 'bg-amber-100 text-amber-600' :
-                                                request.status === 'approved' ? 'bg-green-100 text-green-600' :
-                                                    'bg-red-100 text-red-600'
+                            <div key={request.id} className="bg-white p-6 md:p-8 rounded-[1.5rem] md:rounded-3xl border-2 border-slate-100 hover:border-emerald-200 transition-all group">
+                                <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-6">
+                                    <div className="flex items-center gap-4 md:gap-6">
+                                        <div className={`shrink-0 w-14 h-14 md:w-16 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center ${request.status === 'pending' ? 'bg-amber-100 text-amber-600' :
+                                            request.status === 'approved' ? 'bg-green-100 text-green-600' :
+                                                'bg-red-100 text-red-600'
                                             }`}>
-                                            {request.status === 'pending' ? <Clock className="h-7 w-7" /> :
-                                                request.status === 'approved' ? <CheckCircle className="h-7 w-7" /> :
-                                                    <XCircle className="h-7 w-7" />}
+                                            {request.status === 'pending' ? <Clock className="h-6 w-6 md:h-7 md:w-7" /> :
+                                                request.status === 'approved' ? <CheckCircle className="h-6 w-6 md:h-7 md:w-7" /> :
+                                                    <XCircle className="h-6 w-6 md:h-7 md:w-7" />}
                                         </div>
-                                        <div>
-                                            <h4 className="text-xl font-black text-slate-900 mb-1">{request.book_title}</h4>
-                                            <div className="flex items-center gap-3 text-slate-400 text-sm font-bold">
+                                        <div className="min-w-0">
+                                            <h4 className="text-lg md:text-xl font-black text-slate-900 mb-1 truncate md:whitespace-normal">{request.book_title}</h4>
+                                            <div className="flex flex-wrap items-center gap-2 md:gap-3 text-slate-400 text-[10px] md:text-sm font-bold">
                                                 <div className="flex items-center gap-2">
-                                                    <User className="h-4 w-4" />
-                                                    {request.user_name}
+                                                    <User className="h-3 w-3 md:h-4 md:w-4" />
+                                                    <span className="truncate max-w-[100px] md:max-w-none">{request.user_name}</span>
                                                 </div>
                                                 <span>•</span>
                                                 <span>{new Date(request.request_date).toLocaleDateString()}</span>
@@ -131,7 +131,7 @@ export const AdminRenewalPanel: React.FC = () => {
                                     </div>
 
                                     {request.status === 'pending' && (
-                                        <div className="flex gap-3">
+                                        <div className="flex gap-2 sm:gap-3">
                                             <Button
                                                 onClick={() => updateRequestMutation.mutate({
                                                     id: request.id,
@@ -140,7 +140,7 @@ export const AdminRenewalPanel: React.FC = () => {
                                                 })}
                                                 disabled={updateRequestMutation.isPending}
                                                 variant="outline"
-                                                className="h-12 px-6 rounded-2xl border-red-200 text-red-600 hover:bg-red-50 font-black text-xs uppercase tracking-widest"
+                                                className="h-10 md:h-12 px-5 md:px-6 rounded-xl md:rounded-2xl border-red-200 text-red-600 hover:bg-red-50 font-black text-[10px] md:text-xs uppercase tracking-widest flex-1 sm:flex-none"
                                             >
                                                 Reject
                                             </Button>
@@ -151,7 +151,7 @@ export const AdminRenewalPanel: React.FC = () => {
                                                     reservationId: request.reservation_id
                                                 })}
                                                 disabled={updateRequestMutation.isPending}
-                                                className="h-12 px-6 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-widest"
+                                                className="h-10 md:h-12 px-5 md:px-6 rounded-xl md:rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] md:text-xs uppercase tracking-widest flex-1 sm:flex-none"
                                             >
                                                 Approve
                                             </Button>
@@ -159,7 +159,7 @@ export const AdminRenewalPanel: React.FC = () => {
                                     )}
 
                                     {request.status !== 'pending' && (
-                                        <div className={`px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest ${request.status === 'approved' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                                        <div className={`px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest text-center sm:text-left ${request.status === 'approved' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
                                             }`}>
                                             {request.status}
                                         </div>

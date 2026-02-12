@@ -30,15 +30,15 @@ const Hero = () => {
 
           {/* Subtitle */}
           <p className="text-lg md:text-xl text-primary-foreground/80 max-w-2xl mx-auto mb-10 animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            Experience the future of learning with our intelligent library management system. 
+            Experience the future of learning with our intelligent library management system.
             Powered by IoT, RFID, AI, and Cloud technologies for seamless access to knowledge.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center animate-fade-in px-4 sm:px-0" style={{ animationDelay: "0.4s" }}>
             <Button
               size="lg"
-              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold px-8 py-6 text-lg"
+              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 font-semibold h-14 md:h-16 px-8 text-base md:text-lg rounded-xl md:rounded-2xl"
               asChild
             >
               <a href="#search">Search Books</a>
@@ -46,7 +46,7 @@ const Hero = () => {
             <Button
               size="lg"
               variant="outline"
-              className="border-primary-foreground/30 text-primary-foreground hover:bg-white/10 font-semibold px-8 py-6 text-lg"
+              className="border-primary-foreground/30 text-primary-foreground hover:bg-white/10 font-semibold h-14 md:h-16 px-8 text-base md:text-lg rounded-xl md:rounded-2xl"
               asChild
             >
               <a href="#about">Learn More</a>

@@ -92,8 +92,12 @@
 }
 
 @layer components {
+  .section-container {
+    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
   .btn-nova {
-    @apply relative h-14 px-8 rounded-2xl font-black transition-all duration-300 overflow-hidden flex items-center justify-center;
+    @apply relative h-12 md:h-14 px-6 md:px-8 rounded-xl md:rounded-2xl font-black transition-all duration-300 overflow-hidden flex items-center justify-center;
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, #4338ca 100%);
     box-shadow: 0 10px 20px -5px rgba(67, 56, 202, 0.4);
     color: white;
@@ -109,17 +113,17 @@
   }
 
   .card-3d {
-    @apply bg-white border border-white transition-all duration-500 rounded-[2.5rem] relative;
+    @apply bg-white border border-white transition-all duration-500 rounded-[1.5rem] md:rounded-[2.5rem] relative;
     box-shadow: var(--card-shadow);
   }
 
   .card-3d:hover {
-    @apply -translate-y-4;
+    @apply md:-translate-y-4;
     box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.08);
   }
 
   .glass-panel {
-    @apply bg-white/70 backdrop-blur-3xl border border-white/50 shadow-2xl rounded-[3rem];
+    @apply bg-white/70 backdrop-blur-3xl border border-white/50 shadow-2xl rounded-[2rem] md:rounded-[3rem];
   }
 
   .nav-nova {

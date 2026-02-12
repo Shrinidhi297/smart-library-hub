@@ -196,19 +196,19 @@ const BookSearch: React.FC<BookSearchProps> = ({ onNavigateToDashboard }) => {
   return (
     <div className="w-full max-w-7xl mx-auto space-y-16 md:space-y-32 px-4 md:px-0 bg-background/50">
       {/* Brand Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-10 md:gap-16 animate-nova-in" id="search">
-        <div className="max-w-2xl">
-          <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/5 text-primary text-[10px] md:text-xs font-black mb-6 md:mb-10 gap-2 border border-primary/10">
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 lg:gap-16 animate-nova-in" id="search">
+        <div className="max-w-2xl text-center lg:text-left">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/5 text-primary text-[10px] md:text-xs font-black mb-4 md:mb-10 gap-2 border border-primary/10">
             <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
             {isAdmin ? "ADMIN_COMMAND_CENTER" : "VIRTUAL_ARCHIVE_ACTIVE"}
           </div>
-          <h2 className="text-4xl md:text-8xl font-black tracking-tighter text-slate-900 mb-6 md:mb-10 leading-relaxed py-4">
+          <h2 className="text-4xl md:text-6xl lg:text-8xl font-black tracking-tighter text-slate-900 mb-4 md:mb-10 leading-[1.1] py-2">
             {isAdmin ? "Advanced" : "Explore the"} <br />
-            <span className={`${isAdmin ? 'bg-gradient-to-r from-emerald-600 to-teal-500' : 'shimmer-text'} italic bg-clip-text text-transparent pr-12 pb-4`}>
+            <span className={`${isAdmin ? 'bg-gradient-to-r from-emerald-600 to-teal-500' : 'shimmer-text'} italic bg-clip-text text-transparent lg:pr-12`}>
               {isAdmin ? "Archive Control" : "Digital Vault"}
             </span>
           </h2>
-          <p className="text-slate-500 font-bold text-lg md:text-xl max-w-lg leading-relaxed">
+          <p className="text-slate-500 font-bold text-base md:text-xl max-w-lg leading-relaxed mx-auto lg:mx-0">
             {isAdmin ? "Unified administration node for multispectral asset management and catalog curation." : "Access our high-performance collection of peer-reviewed records and intellectual assets."}
           </p>
         </div>
@@ -323,28 +323,28 @@ const BookSearch: React.FC<BookSearchProps> = ({ onNavigateToDashboard }) => {
       {/* Search Bar */}
       <div className="relative animate-nova-in" style={{ animationDelay: '200ms' }}>
         <div className={`absolute inset-0 ${isAdmin ? 'bg-emerald-500/10' : 'bg-primary/10'} blur-[100px] rounded-[5rem] -z-10 transition-colors duration-700`} />
-        <Search className={`absolute left-8 md:left-12 top-1/2 -translate-y-1/2 h-6 w-6 text-slate-400 group-focus-within:${isAdmin ? 'text-emerald-500' : 'text-primary'} transition-colors`} />
+        <Search className={`absolute left-6 md:left-12 top-1/2 -translate-y-1/2 h-5 w-5 md:h-6 md:w-6 text-slate-400 group-focus-within:${isAdmin ? 'text-emerald-500' : 'text-primary'} transition-colors`} />
         <Input
-          placeholder="QUERY ARCHIVE METADATA..."
+          placeholder="QUERY ARCHIVE..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          className={`h-24 md:h-32 pl-20 md:pl-28 pr-48 md:pr-64 bg-white shadow-2xl focus:shadow-[0_40px_100px_-20px_rgba(${isAdmin ? '16,185,129' : '67,56,202'},0.15)] rounded-[2.5rem] md:rounded-[3.5rem] text-xl md:text-3xl font-black text-slate-900 transition-all focus:ring-[20px] focus:ring-${isAdmin ? 'emerald' : 'primary'}/5 border-white border-4`}
+          className={`h-20 md:h-32 pl-14 md:pl-28 pr-32 md:pr-64 bg-white shadow-2xl focus:shadow-[0_40px_100px_-20px_rgba(${isAdmin ? '16,185,129' : '67,56,202'},0.15)] rounded-2xl md:rounded-[3.5rem] text-lg md:text-3xl font-black text-slate-900 transition-all focus:ring-[15px] md:focus:ring-[20px] focus:ring-${isAdmin ? 'emerald' : 'primary'}/5 border-white border-2 md:border-4`}
         />
-        <div className="absolute right-4 md:right-6 top-1/2 -translate-y-1/2 flex items-center gap-4 md:gap-6">
+        <div className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 flex items-center gap-2 md:gap-6">
           {searchQuery && (
             <Button
               variant="ghost"
               onClick={clearSearch}
-              className="h-16 w-16 rounded-full p-0 hover:bg-slate-50 transition-colors"
+              className="h-10 w-10 md:h-16 md:w-16 rounded-full p-0 hover:bg-slate-50 transition-colors hidden sm:flex"
               onMouseEnter={playHover}
             >
-              <X className="h-6 w-6 text-slate-400" />
+              <X className="h-5 w-5 text-slate-400" />
             </Button>
           )}
           <Button
             onClick={handleSearch}
-            className={`${isAdmin ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200' : 'btn-nova'} h-16 md:h-20 px-8 md:px-16 rounded-2xl md:rounded-[2.5rem] text-xs md:text-lg uppercase tracking-widest font-black text-white shadow-2xl transition-all`}
+            className={`${isAdmin ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-200' : 'btn-nova'} h-12 md:h-20 px-6 md:px-16 rounded-xl md:rounded-[2.5rem] text-[10px] md:text-lg uppercase tracking-widest font-black text-white shadow-2xl transition-all`}
             onMouseEnter={playHover}
           >
             Execute
@@ -352,8 +352,7 @@ const BookSearch: React.FC<BookSearchProps> = ({ onNavigateToDashboard }) => {
         </div>
       </div>
 
-      {/* Grid of Books */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16 animate-nova-in pb-40" style={{ animationDelay: '300ms' }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-16 animate-nova-in pb-40" style={{ animationDelay: '300ms' }}>
         {books.map((book, idx) => (
           <div
             key={book.id}
@@ -361,7 +360,7 @@ const BookSearch: React.FC<BookSearchProps> = ({ onNavigateToDashboard }) => {
             style={{ animationDelay: `${idx * 50}ms` }}
             onMouseEnter={playHover}
           >
-            <div className="p-10 h-full flex flex-col justify-between relative bg-white border border-white rounded-[3rem] shadow-2xl hover:shadow-primary/10 transition-all duration-700 overflow-hidden">
+            <div className="p-6 md:p-10 h-full flex flex-col justify-between relative bg-white border border-white rounded-[2rem] md:rounded-[3rem] shadow-2xl hover:shadow-primary/10 transition-all duration-700 overflow-hidden">
               <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-primary/20 transition-colors" />
 
               <div className="flex justify-between items-start mb-12">

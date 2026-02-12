@@ -53,22 +53,23 @@ const Header = () => {
         </div>
 
         {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-white/10 animate-fade-in">
-            <div className="flex flex-col gap-2">
-              {navLinks.map((link) => (
-                <a
-                  key={link.name}
-                  href={link.href}
-                  className="px-4 py-3 text-sm font-medium text-header-foreground/80 hover:text-header-foreground hover:bg-white/10 rounded-lg transition-all duration-200"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {link.name}
-                </a>
-              ))}
-            </div>
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${isMenuOpen ? "max-h-[500px] opacity-100 border-t border-white/10" : "max-h-0 opacity-0"
+            }`}
+        >
+          <div className="flex flex-col gap-1 py-4">
+            {navLinks.map((link) => (
+              <a
+                key={link.name}
+                href={link.href}
+                className="px-4 py-3 text-sm font-bold uppercase tracking-widest text-header-foreground/70 hover:text-header-foreground hover:bg-white/10 rounded-xl transition-all duration-200"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {link.name}
+              </a>
+            ))}
           </div>
-        )}
+        </div>
       </nav>
     </header>
   );

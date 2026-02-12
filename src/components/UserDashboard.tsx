@@ -137,16 +137,16 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
         <div className="w-full max-w-7xl mx-auto pt-32 pb-24 px-4 md:px-0 bg-background/50">
             <div className="flex flex-col gap-12">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 animate-nova-in">
-                    <div>
-                        <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/5 text-primary text-xs font-black mb-6 gap-2 border border-primary/10">
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 animate-nova-in">
+                    <div className="text-center lg:text-left">
+                        <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/5 text-primary text-[10px] md:text-xs font-black mb-4 md:mb-6 gap-2 border border-primary/10">
                             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
                             USER_ID: {user.id.slice(-8).toUpperCase()}
                         </div>
-                        <h2 className="text-4xl md:text-7xl font-black tracking-tighter text-slate-900 leading-tight mb-4">
-                            Member <span className="shimmer-text italic pr-4">Command</span>
+                        <h2 className="text-4xl md:text-5xl lg:text-7xl font-black tracking-tighter text-slate-900 leading-[1.1] mb-4">
+                            Member <span className="shimmer-text italic lg:pr-4">Command</span>
                         </h2>
-                        <p className="text-slate-500 font-bold text-lg md:text-xl">
+                        <p className="text-slate-500 font-bold text-base md:text-xl">
                             Welcome back, {user.firstName}. Monitor your archive activity and assets.
                         </p>
                     </div>
@@ -242,46 +242,46 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
                             )}
 
                             {reservations.map((res: any) => (
-                                <div key={res.id} className="card-3d p-8 flex flex-col md:flex-row md:items-center justify-between gap-6 group">
-                                    <div className="flex items-center gap-8">
-                                        <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 ${res.status === 'overdue' ? 'bg-red-50 text-red-500 shadow-lg shadow-red-200/50' : 'bg-primary/5 text-primary shadow-lg shadow-primary/20'}`}>
-                                            {res.status === 'overdue' ? <AlertCircle className="h-8 w-8" /> : <History className="h-8 w-8" />}
+                                <div key={res.id} className="card-3d p-6 md:p-8 flex flex-col xl:flex-row xl:items-center justify-between gap-6 group">
+                                    <div className="flex items-start md:items-center gap-4 md:gap-8">
+                                        <div className={`shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl md:rounded-3xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 ${res.status === 'overdue' ? 'bg-red-50 text-red-500 shadow-lg shadow-red-200/50' : 'bg-primary/5 text-primary shadow-lg shadow-primary/20'}`}>
+                                            {res.status === 'overdue' ? <AlertCircle className="h-6 w-6 md:h-8 md:w-8" /> : <History className="h-6 w-6 md:h-8 md:w-8" />}
                                         </div>
-                                        <div>
-                                            <h4 className="text-2xl font-black text-slate-900 group-hover:text-primary transition-colors leading-tight mb-2">{res.books?.title}</h4>
-                                            <div className="flex flex-wrap gap-4">
-                                                <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-                                                    <Clock className="h-3.5 w-3.5" /> Due: {new Date(res.due_date).toLocaleDateString()}
+                                        <div className="min-w-0">
+                                            <h4 className="text-xl md:text-2xl font-black text-slate-900 group-hover:text-primary transition-colors leading-tight mb-2 truncate md:whitespace-normal">{res.books?.title}</h4>
+                                            <div className="flex flex-wrap gap-3 md:gap-4">
+                                                <div className="flex items-center gap-2 text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                                                    <Clock className="h-3 md:h-3.5 w-3 md:w-3.5" /> Due: {new Date(res.due_date).toLocaleDateString()}
                                                 </div>
-                                                <div className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${res.status === 'overdue' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
+                                                <div className={`px-2 md:px-3 py-0.5 md:py-1 rounded-lg text-[8px] md:text-[9px] font-black uppercase tracking-widest ${res.status === 'overdue' ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-600'}`}>
                                                     {res.status}
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-4">
+                                    <div className="flex flex-col sm:flex-row gap-3 md:gap-4 shrink-0">
                                         <AlertDialog>
                                             <AlertDialogTrigger asChild>
                                                 <Button
                                                     variant="outline"
-                                                    className="h-14 px-8 rounded-2xl border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 font-black text-xs uppercase tracking-[0.2em] transition-all"
+                                                    className="h-12 md:h-14 px-6 md:px-8 rounded-xl md:rounded-2xl border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 font-black text-[10px] md:text-xs uppercase tracking-[0.2em] transition-all w-full sm:w-auto"
                                                 >
                                                     <Trash2 className="mr-2 h-4 w-4" />
                                                     Cancel
                                                 </Button>
                                             </AlertDialogTrigger>
-                                            <AlertDialogContent className="rounded-[2.5rem] border-none shadow-3xl">
+                                            <AlertDialogContent className="rounded-[2rem] md:rounded-[2.5rem] border-none shadow-3xl w-[90vw] max-w-md">
                                                 <AlertDialogHeader>
-                                                    <AlertDialogTitle className="text-2xl font-black text-slate-900">Cancel Reservation?</AlertDialogTitle>
-                                                    <AlertDialogDescription className="text-slate-500 font-bold">
+                                                    <AlertDialogTitle className="text-xl md:text-2xl font-black text-slate-900">Cancel Reservation?</AlertDialogTitle>
+                                                    <AlertDialogDescription className="text-slate-500 font-bold text-sm">
                                                         Are you sure you want to cancel your reservation for <span className="text-slate-900 font-black">{res.books?.title}</span>? This action cannot be undone.
                                                     </AlertDialogDescription>
                                                 </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel className="rounded-2xl h-12 px-6 font-black text-xs uppercase tracking-widest">Keep It</AlertDialogCancel>
+                                                <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+                                                    <AlertDialogCancel className="rounded-xl md:rounded-2xl h-12 px-6 font-black text-[10px] md:text-xs uppercase tracking-widest mt-0">Keep It</AlertDialogCancel>
                                                     <AlertDialogAction
-                                                        className="rounded-2xl h-12 px-6 bg-red-600 hover:bg-red-700 text-white font-black text-xs uppercase tracking-widest"
+                                                        className="rounded-xl md:rounded-2xl h-12 px-6 bg-red-600 hover:bg-red-700 text-white font-black text-[10px] md:text-xs uppercase tracking-widest"
                                                         onClick={() => deleteReservationMutation.mutate({
                                                             reservationId: res.id,
                                                             bookId: res.book_id,
@@ -298,12 +298,12 @@ const UserDashboard: React.FC<UserDashboardProps> = ({ onNavigateToSearch }) => 
                                             <DialogTrigger asChild>
                                                 <Button
                                                     variant="outline"
-                                                    className="h-14 px-8 rounded-2xl border-slate-200 font-black text-xs uppercase tracking-[0.2em] hover:bg-slate-50 hover:border-primary/50 transition-all"
+                                                    className="h-12 md:h-14 px-6 md:px-8 rounded-xl md:rounded-2xl border-slate-200 font-black text-[10px] md:text-xs uppercase tracking-[0.2em] hover:bg-slate-50 hover:border-primary/50 transition-all w-full sm:w-auto"
                                                 >
                                                     Detail View
                                                 </Button>
                                             </DialogTrigger>
-                                            <DialogContent className="sm:max-w-md rounded-[2.5rem] border-none shadow-3xl">
+                                            <DialogContent className="sm:max-w-md rounded-[2rem] md:rounded-[2.5rem] border-none shadow-3xl w-[95vw]">
                                                 <DialogHeader>
                                                     <DialogTitle className="text-3xl font-black tracking-tighter text-slate-900">{res.books?.title}</DialogTitle>
                                                     <DialogDescription className="font-bold text-slate-400 uppercase tracking-widest text-xs">
