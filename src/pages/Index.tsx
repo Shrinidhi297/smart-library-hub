@@ -29,7 +29,7 @@ const Index = () => {
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
   const navigate = useNavigate();
-  const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
+  const isAdmin = user?.primaryEmailAddress?.emailAddress?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
   const { playHover, playClick } = useSoundEffects();
   const [view, setView] = useState<'search' | 'dashboard'>('search');
   const [showAdminConfirm, setShowAdminConfirm] = useState(false);

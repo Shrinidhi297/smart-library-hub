@@ -26,7 +26,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { AdminRenewalPanel } from "./AdminRenewalPanel";
-import { AdminReservationPanel } from "./AdminReservationPanel";
 
 interface Book {
   id: string;
@@ -55,7 +54,7 @@ interface BookSearchProps {
 
 const BookSearch: React.FC<BookSearchProps> = ({ onNavigateToDashboard }) => {
   const { user, isLoaded } = useUser();
-  const isAdmin = user?.primaryEmailAddress?.emailAddress === ADMIN_EMAIL;
+  const isAdmin = user?.primaryEmailAddress?.emailAddress?.toLowerCase() === ADMIN_EMAIL.toLowerCase();
   const { playHover, playClick } = useSoundEffects();
   const queryClient = useQueryClient();
 
@@ -332,10 +331,7 @@ const BookSearch: React.FC<BookSearchProps> = ({ onNavigateToDashboard }) => {
 
       {/* Admin Panels */}
       {isAdmin && (
-        <div className="space-y-10">
-          <AdminReservationPanel />
-          <AdminRenewalPanel />
-        </div>
+        <AdminRenewalPanel />
       )}
 
       {/* Search Bar */}
