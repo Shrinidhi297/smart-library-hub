@@ -1,5 +1,5 @@
 import React from "react";
-import { CheckCircle, XCircle, Clock, User } from "lucide-react";
+import { CheckCircle, XCircle, Clock, User, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -72,6 +72,24 @@ export const AdminRenewalPanel: React.FC = () => {
             toast.error("Action Failed", { description: error.message });
         }
     });
+
+    const deleteRequestMutation = useMutation({
+        mutationFn: async (id: string) => {
+            const { error } = await supabase
+                .from('renewal_requests')
+                .delete()
+                .eq('id', id);
+            if (error) throw error;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['renewal-requests'] });
+            toast.success("Request Deleted", { description: "The renewal request has been removed from the records." });
+        },
+        onError: (error: any) => {
+            toast.error("Delete Failed", { description: error.message });
+        }
+    });
+
 
     const pendingRequests = renewalRequests.filter(r => r.status === 'pending');
 
@@ -159,9 +177,24 @@ export const AdminRenewalPanel: React.FC = () => {
                                     )}
 
                                     {request.status !== 'pending' && (
-                                        <div className={`px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest text-center sm:text-left ${request.status === 'approved' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
-                                            }`}>
-                                            {request.status}
+                                        <div className="flex items-center gap-3">
+                                            <div className={`px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl font-black text-[10px] md:text-xs uppercase tracking-widest text-center sm:text-left ${request.status === 'approved' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'
+                                                }`}>
+                                                {request.status}
+                                            </div>
+                                            <Button
+                                                onClick={() => {
+                                                    if (window.confirm("Are you sure you want to delete this renewal record?")) {
+                                                        deleteRequestMutation.mutate(request.id);
+                                                    }
+                                                }}
+                                                variant="ghost"
+                                                size="icon"
+                                                className="h-10 w-10 md:h-12 md:w-12 rounded-xl md:rounded-2xl text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors"
+                                                disabled={deleteRequestMutation.isPending}
+                                            >
+                                                <Trash2 className="h-5 w-5" />
+                                            </Button>
                                         </div>
                                     )}
                                 </div>

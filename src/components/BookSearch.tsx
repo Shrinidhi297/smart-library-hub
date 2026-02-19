@@ -26,6 +26,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { AdminRenewalPanel } from "./AdminRenewalPanel";
+import { AdminReservationPanel } from "./AdminReservationPanel";
 
 interface Book {
   id: string;
@@ -90,6 +91,18 @@ const BookSearch: React.FC<BookSearchProps> = ({ onNavigateToDashboard }) => {
   const reserveMutation = useMutation({
     mutationFn: async (bookId: string) => {
       if (!user) throw new Error("Authentication required");
+
+      // 0. Update profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          full_name: user.fullName || user.username || 'Anonymous',
+          avatar_url: user.imageUrl,
+          updated_at: new Date().toISOString()
+        });
+
+      if (profileError) console.error("Profile sync failed:", profileError);
 
       // 1. Create reservation
       const { error: resError } = await supabase
@@ -317,8 +330,13 @@ const BookSearch: React.FC<BookSearchProps> = ({ onNavigateToDashboard }) => {
         </div>
       )}
 
-      {/* Admin Renewal Requests Panel */}
-      {isAdmin && <AdminRenewalPanel />}
+      {/* Admin Panels */}
+      {isAdmin && (
+        <div className="space-y-10">
+          <AdminReservationPanel />
+          <AdminRenewalPanel />
+        </div>
+      )}
 
       {/* Search Bar */}
       <div className="relative animate-nova-in" style={{ animationDelay: '200ms' }}>
